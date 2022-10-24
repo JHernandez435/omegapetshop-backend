@@ -19,4 +19,4 @@ app.listen(port, () => { console.log("Api iniciando en el puerto " +  port) })
 
 // Rutas
 // app.get("/", (request, response) => { response.send('Hola mundo'); })
-app.use("/categorias", require("./Routes/CategoriaRoutes"));
+app.use("/api/categorias", require("./Routes/CategoriaRoutes"));
