@@ -2,7 +2,6 @@ const CategoriaModelo = require("../Model/CategoriaModelo")
 const CategoriaController = {};
 
 CategoriaController.crearCategoria = async(req, res) => {
-
     try {
         const objeto = req.body;
         console.log(objeto);
@@ -10,20 +9,32 @@ CategoriaController.crearCategoria = async(req, res) => {
         const categoriaSave = await categoria.save();
         res.status(201).send(categoriaSave);
     } catch (error) {
-        res.status(400).send("Mala Peticion");
+        res.status(400).send("Mala Peticion."+error);
     }
-
 }
+
 CategoriaController.consultarCategorias = async(req, res) => {
     try {
-        const listaCategorias = await CategoriaModelo.find();
-        if (listaCategorias.length > 0) {
-            res.status(200).send(listaCategorias)
-        } else {
-            res.status(404).send("No hay datos")            
+        const filtro = req.query;
+        let listacategorias;
+        if (filtro.nombre != null) {
+            listacategorias = await CategoriaModelo.find({
+                "$or" : [ 
+                    {"nombre": { $regex:filtro.nombre, $options:"i" }}
+                ]
+            });
+        }
+        else {
+            listacategorias = await CategoriaModelo.find();
+        }
+        if (listacategorias.length > 0) {
+            res.status(200).send(listacategorias);
+        }
+        else {
+            res.status(404).send("No hay datos");
         }
     } catch (error) {
-        res.status8(400).send("Mala peticion")
+        res.status(400).send("Mala petición. "+error);
     }
 }
 
@@ -41,7 +52,31 @@ CategoriaController.consultarCategoria = async(req, res) => {
     }
 }
 
-CategoriaController.actualizarCategoria = async(req, res) => {}
-CategoriaController.borrarCategoria = async(req, res) => {}
+CategoriaController.actualizarCategoria = async(req, res) => {
+    try {
+        const id = req.params.id;
+        const body = req.body;
+        const categoria = {
+            nombre: body.nombre,
+            activo: body.activo,
+            imagen: body.imagen
+        }
+        console.log(categoria);
+        const categoriaActualizada = await CategoriaModelo.findByIdAndUpdate(id, categoria, { new: true });
+        res.status(200).send(categoriaActualizada);
+    } catch (error) {
+        res.status(400).send("Mala petición. "+error);
+    }
+}
+
+CategoriaController.borrarCategoria = async(req, res) => {
+    try {
+        const id = req.params.id;
+        const categoriaBorrada = await CategoriaModelo.findByIdAndDelete(id);
+        res.status(200).send(categoriaBorrada);
+    } catch (error) {
+        res.status(400).send("Mala petición. "+error);
+    }
+}
 
 module.exports = CategoriaController;
