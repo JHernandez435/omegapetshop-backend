@@ -58,8 +58,13 @@ CategoriaController.actualizarCategoria = async(req, res) => {
         const body = req.body;
         const categoria = {
             nombre: body.nombre,
-            activo: body.activo,
-            imagen: body.imagen
+            tipoProducto: body.tipoProducto,
+            categoria: body.categoria,
+            enfoque: body.enfoque,
+            edad: body.edad,
+            marca: body.marca,
+            cantKilo: body.cantKilos,
+            precio: body.precio
         }
         console.log(categoria);
         const categoriaActualizada = await CategoriaModelo.findByIdAndUpdate(id, categoria, { new: true });
